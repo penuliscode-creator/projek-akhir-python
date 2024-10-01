@@ -110,13 +110,12 @@ def create_hourly_rentals_with_weather(df):
 
     return hourly_rentals_with_weather
 
-
 def create_rfm_df(df):
     df['dteday'] = pd.to_datetime(df['dteday'])
 
     # Menghitung Recency
     # Menghitung tanggal terakhir penyewaan
-    last_rental_date =df['dteday'].max()
+    last_rental_date = df['dteday'].max()
     # Menghitung recency
     df['Recency'] = (last_rental_date - df['dteday']).dt.days
 
@@ -139,6 +138,7 @@ def create_rfm_df(df):
 
     # Memeriksa hasil RFM
     return rfm_df
+
 
 # Load cleaned data
 all_df = pd.read_csv("dashboard/main.csv")
@@ -311,33 +311,25 @@ with col3:
 
 fig, ax = plt.subplots(nrows=1, ncols=3, figsize=(35, 15))
 colors = ["#90CAF9", "#90CAF9", "#90CAF9", "#90CAF9", "#90CAF9"]
- 
 
-plt.subplot(1, 3, 1)
-sns.histplot(rfm_df['Recency'], bins=30, kde=True)
-plt.title('Distribusi Recency', fontsize=20)
-plt.xlabel('Days Sice Last Rental', fontsize=20)
-plt.ylabel('Rental Quantity', fontsize=20)
-plt.xticks(fontsize=20)
-plt.yticks(fontsize=20)
+sns.barplot(y="Recency", x="dteday", data=rfm_df.sort_values(by="Recency", ascending=True).head(5),hue="dteday", palette=colors, ax=ax[0])
+ax[0].set_ylabel(None)
+ax[0].set_xlabel(None)
+ax[0].set_title("By Recency (days)", loc="center", fontsize=18)
+ax[0].tick_params(axis ='x', labelsize=15)
 
+sns.barplot(y="Frequency", x="dteday", data=rfm_df.sort_values(by="Frequency", ascending=False).head(5),hue="dteday", palette=colors, ax=ax[1])
+ax[1].set_ylabel(None)
+ax[1].set_xlabel(None)
+ax[1].set_title("By Frequency", loc="center", fontsize=18)
+ax[1].tick_params(axis='x', labelsize=15)
 
-plt.subplot(1, 3, 2)
-sns.histplot(rfm_df['Frequency'], bins=30, kde=True, color="red")
-plt.title('Distribusi Frequency', fontsize=20)
-plt.xlabel('Rental per Day', fontsize=20)
-plt.ylabel('Number of Days', fontsize=20)
-plt.xticks(fontsize=20)
-plt.yticks(fontsize=20)
+sns.barplot(y="Monetary", x="dteday", data=rfm_df.sort_values(by="Monetary", ascending=False).head(5),hue="dteday", palette=colors, ax=ax[2])
+ax[2].set_ylabel(None)
+ax[2].set_xlabel(None)
+ax[2].set_title("By Monetary", loc="center", fontsize=18)
+ax[2].tick_params(axis='x', labelsize=15)
 
-
-plt.subplot(1, 3, 3)
-sns.histplot(rfm_df['Monetary'], bins=30, kde=True, color='b')
-plt.title('Distribusi Monetary', fontsize=20)
-plt.xlabel('Total Number of Rentals', fontsize=20)
-plt.ylabel('Number of Days', fontsize=20)
-plt.xticks(fontsize=20)
-plt.yticks(fontsize=20)
 st.pyplot(fig)
 
 st.caption('Copyright (c) Dicoding 2023')
