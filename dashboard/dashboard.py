@@ -71,22 +71,23 @@ def create_season_rentals(df):
     return season_rentals
 
 def create_result_sorted(df):
-    def categorize_day(row):
+    def result_sorted(row):
         if row["holiday"] == 1:
             return "Holiday"
-        elif row["workingday"] == 1:
-            return "Working Day"
-        elif row["weekday"] >= 5:
+        elif row["weekday"] == 0 or row["weekday"] == 6:  # 0 is Sunday, 6 is Saturday
             return "Weekend"
         else:
             return "Weekday"
 
-    df["day_type"] =df.apply(categorize_day, axis=1)
+    # Terapkan fungsi kategori pada dataset
+    df["day_type"] = df.apply(result_sorted, axis=1)
 
     # Menghitung jumlah persewaan berdasarkan kategori hari
-    #result = hours_df.groupby(by="day_type")["cnt"].sum().reset_index()
     result = df.groupby(by="day_type")["cnt"].sum().reset_index()
+
+    # Mengurutkan hasil berdasarkan jumlah penyewaan
     result_sorted = result.sort_values(by="cnt", ascending=False).reset_index(drop=True)
+
     return result_sorted
 
 def create_hourly_rentals(df):
